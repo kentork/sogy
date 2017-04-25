@@ -16,3 +16,23 @@ RECRUIT_TALK_API_TOKEN=your_a3rt_token
 ```bash
 node index.js
 ```
+
+
+# Configuration
+
+## manually
+
+```bash
+sudo apt-get update
+sudo apt-get install git
+curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+git clone https://github.com/kentork/sogy
+
+cd sogy
+npm install
+
+sudo npm install pm2 -g
+pm2 start index.js
+```
