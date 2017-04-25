@@ -3,6 +3,8 @@ const Botkit = require('botkit');
 const request = require('request');
 const apiai = require('apiai');
 
+const weather = require('./weather/api.js')
+
 
 if (!process.env.SLACK_API_TOKEN || !process.env.RECRUIT_TALK_API_TOKEN || !process.env.APIAI_TOKEN) {
   console.log('Error: Specify token in environment');
@@ -33,7 +35,16 @@ controller.hears(
       if (response.status.code === 200) {
         switch(response.result.action) {
           case 'question.weather':
-            bot.reply(message, 'お天気について聞かれています');
+            weather.askWeather(
+              response.result.parameters.location,
+              response.result.parameters.date,
+              function(text) {
+                bot.reply(message, text);
+              },
+              function() {
+                askRecruit(bot, message);
+              }
+            )
             break;
           case 'input.unknown':
             askRecruit(bot, message);
