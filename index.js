@@ -35,8 +35,12 @@ controller.hears(
     };
 
     request.post(options, function(error, response, body){
+      console.log("デバグ")
+      console.log(body)
       if(body.status === 0 ) {
         bot.reply(message, body.results[0].reply);
+      else if(body.status === 2000 ) {
+        bot.reply(message, 'あ、そういうの分かんないんで');
       } else {
         bot.reply(message, '故障中！故障中！');
       }
