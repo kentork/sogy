@@ -35,8 +35,6 @@ controller.hears(
     };
 
     request.post(options, function(error, response, body){
-      console.log("デバグ")
-      console.log(body)
       if(body.status === 0 ) {
         bot.reply(message, body.results[0].reply);
       } else if(body.status === 2000 ) {
