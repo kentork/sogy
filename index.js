@@ -1,22 +1,23 @@
 require('dotenv').config()
-const Botkit = require('botkit');
-const request = require('request');
-const apiai = require('apiai');
+const Botkit = require('botkit')
+const axios = require('axios')
+const querystring = require('querystring')
+const apiai = require('apiai')
 
 const weather = require('./weather/api.js')
 
 
 if (!process.env.SLACK_API_TOKEN || !process.env.RECRUIT_TALK_API_TOKEN || !process.env.APIAI_TOKEN) {
-  console.log('Error: Specify token in environment');
-  process.exit(1);
+  console.log('Error: Specify token in environment')
+  process.exit(1)
 }
 
-const controller = Botkit.slackbot({ debug: true });
-controller.spawn({ token: process.env.SLACK_API_TOKEN }).startRTM(function(err){
+const controller = Botkit.slackbot({ debug: true })
+controller.spawn({ token: process.env.SLACK_API_TOKEN }).startRTM(err => {
   if (err) {
-    throw new Error(err);
+    throw new Error(err)
   }
-});
+})
 
 const ai = apiai(process.env.APIAI_TOKEN, {language:'jp'})
 
@@ -26,66 +27,61 @@ const ai = apiai(process.env.APIAI_TOKEN, {language:'jp'})
 controller.hears(
   '',
   ['direct_message', 'direct_mention', 'mention'],
-  function(bot, message) {
-    var talk = ai.textRequest(message.text, {
-      sessionId: message.user
-    });
+  (bot, message) => {
+    const talk = ai.textRequest(
+      message.text,
+      { sessionId: message.user }
+    )
 
-    talk.on('response', function(response) {
+    talk.on('response', response => {
       if (response.status.code === 200) {
         switch(response.result.action) {
           case 'question.weather':
             weather.askWeather(
               response.result.parameters.location,
-              response.result.parameters.date,
-              function(text) {
-                bot.reply(message, text);
-              },
-              function() {
-                askRecruit(bot, message);
-              }
+              response.result.parameters.date
             )
-            break;
+            .then(text => {
+              bot.reply(message, text)
+            })
+            .catch(error => {
+              askRecruit(bot, message)
+            })
+            break
           case 'input.unknown':
-            askRecruit(bot, message);
-            break;
+            askRecruit(bot, message)
+            break
           default:
-            askRecruit(bot, message);
-            break;
+            askRecruit(bot, message)
+            break
         }
       } else {
-        askRecruit(bot, message);
+        askRecruit(bot, message)
       }
-    });
-    talk.on('error', function(error) {
-      askRecruit(bot, message);
-    });
-    talk.end();
+    })
+    talk.on('error', error => {
+      askRecruit(bot, message)
+    })
+    talk.end()
   }
 );
 
 
 function askRecruit(bot, message) {
-  const options = {
-    uri: "https://api.a3rt.recruit-tech.co.jp/talk/v1/smalltalk",
-    method: 'POST',
-    headers: {
-      "Content-type": "application/x-www-form-urlencoded",
-    },
-    json: true,
-    form: {
-      "apikey": process.env.RECRUIT_TALK_API_TOKEN,
-      "query": message.text
-    }
-  };
-
-  request.post(options, function(error, response, body){
-    if(body.status === 0 ) {
-      bot.reply(message, body.results[0].reply);
-    } else if(body.status === 2000 ) {
-      bot.reply(message, 'あ、そういうの分かんないんで');
+  return axios.post(
+    "https://api.a3rt.recruit-tech.co.jp/talk/v1/smalltalk",
+    querystring.stringify({ apikey: process.env.RECRUIT_TALK_API_TOKEN, query: message.text })
+  )
+  .then(response => {
+    if(response.data.status === 0 ) {
+      bot.reply(message, response.data.results[0].reply);
+    } else if(response.data.status === 2000 ) {
+      bot.reply(message, 'あ、そういうの分かんないんで')
     } else {
-      bot.reply(message, '故障中！故障中！');
+      bot.reply(message, '故障中！故障中！')
     }
-  });
+  })
+  .catch(error => {
+    console.log(error)
+  })
 }

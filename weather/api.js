@@ -1,26 +1,22 @@
-const request = require('request');
+const axios = require('axios');
 const locations = require('./locations.json')
 
 
-exports.askWeather = function(location, date, success, failure) {
-  const code = locations[location];
+exports.askWeather = (location, date) => {
+  const code = locations[location]
 
-  if (code !== undefined) {
-    const options = {
-      uri: "http://weather.livedoor.com/forecast/webservice/json/v1?city=" + code,
-      method: "GET",
-      json: true
-    };
+  if (code === undefined)
+    return Promise.reject(new Error(`Parameter error: Can not find ${location} from a location list`))
 
-    request.get(options, function(error, response, body){
-      if(!error && response.statusCode == 200) {
-        success(body.description)
-      } else {
-        failure()
-      }
-    });
-
-  } else {
-    failure()
-  }
+  return axios.get(
+    "http://weather.livedoor.com/forecast/webservice/json/v1", { params: { city: code } }
+  )
+  .then(response => {
+    if(response.status == 200) {
+      return response.data.description
+    } else {
+      new Error(`Request error: response error code`)
+      return
+    }
+  })
 }
