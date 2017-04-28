@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const Botkit = require('botkit')
-const AI = require('./apiai/api.js')
+const AI = require('./lib/apiai/api.js')
 
 if (!process.env.SLACK_API_TOKEN) {
   console.log('Error: slack token is not found in environment variables.')
