@@ -6,16 +6,18 @@
   "license": "MIT",
   "scripts": {
     "start": "node index.js",
+    "dev": "cross-env NODE_ENV=development node index.js",
     "test": "ava",
     "test:init": "ava --init"
   },
   "dependencies": {
     "apiai": "^4.0.2",
+    "axios": "^0.16.1",
     "botkit": "^0.5.2",
-    "dotenv": "^4.0.0",
-    "request": "^2.81.0"
+    "dotenv": "^4.0.0"
   },
   "devDependencies": {
-    "ava": "^0.19.1"
+    "ava": "^0.19.1",
+    "cross-env": "^4.0.0"
   }
 }
