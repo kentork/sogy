@@ -2,7 +2,7 @@ const axios = require('axios');
 const locations = require('./locations.json')
 
 
-exports.askWeather = (location, date) => {
+exports.ask = (location, date) => {
   const code = locations[location]
 
   if (code === undefined)
