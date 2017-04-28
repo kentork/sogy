@@ -3,7 +3,7 @@ const Botkit = require('botkit');
 const request = require('request');
 const apiai = require('apiai');
 
-const weather = require('./weather/api.js')
+const weather = require('./lib/weather/api.js')
 
 
 if (!process.env.SLACK_API_TOKEN || !process.env.RECRUIT_TALK_API_TOKEN || !process.env.APIAI_TOKEN) {
