@@ -1,12 +1,23 @@
 require('dotenv').config()
-
-const Botkit = require('botkit')
-const AI = require('./lib/apiai/api.js')
-
 if (!process.env.SLACK_API_TOKEN) {
   console.log('Error: slack token is not found in environment variables.')
   process.exit(1)
 }
+if (!process.env.APIAI_TOKEN) {
+  console.log('Error: api.ai token is not found in environment variables.')
+  process.exit(1)
+}
+if (!process.env.RECRUIT_TALK_API_TOKEN) {
+  console.log('Error: A3RT token is not found in environment variables.')
+  process.exit(1)
+}
+
+
+const Botkit = require('botkit')
+const AI = require('./lib/apiai/api.js')(
+  process.env.APIAI_TOKEN,
+  process.env.RECRUIT_TALK_API_TOKEN
+)
 
 
 // Create Botkit controller
