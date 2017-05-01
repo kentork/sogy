@@ -7,8 +7,15 @@ machine:
 dependencies:
   override:
     - yarn
+  pre:
+    npm install -g pm2
   cache_directories:
     - ~/.cache/yarn
 test:
   override:
     - yarn test
+deployment:
+  deploy:
+    branch: master
+    commands:
+      - pm2 deploy ecosystem.config.js production
