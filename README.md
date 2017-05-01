@@ -1,5 +1,7 @@
 # Sogy is an AI friends
 
+[![CircleCI](https://circleci.com/gh/kentork/sogy.svg?style=svg)](https://circleci.com/gh/kentork/sogy)
+
 ## Prepare: get tokens and put `.env` file
 
 This bot uses [Slack bot token](https://slack.com/apps/A0F7YS25R-bots), [api.ai client token](https://console.api.ai/api-client/) and [Recruit A3rt token](https://a3rt.recruit-tech.co.jp/product/talkAPI/)
