@@ -3,30 +3,28 @@ if (!process.env.SLACK_API_TOKEN) {
   console.log('Error: slack token is not found in environment variables.')
   process.exit(1)
 }
-if (!process.env.APIAI_TOKEN) {
-  console.log('Error: api.ai token is not found in environment variables.')
-  process.exit(1)
-}
-if (!process.env.RECRUIT_TALK_API_TOKEN) {
-  console.log('Error: A3RT token is not found in environment variables.')
+if (!process.env.DOCOMO_API_TOKEN) {
+  console.log('Error: docomo token is not found in environment variables.')
   process.exit(1)
 }
 
 
 const Botkit = require('botkit')
-const AI = require('./lib/apiai/api.js')(
-  process.env.APIAI_TOKEN,
-  process.env.RECRUIT_TALK_API_TOKEN
-)
+const AI = require('./lib/docomo')(process.env.DOCOMO_API_TOKEN)
 
 
 // Create Botkit controller
-const controller = Botkit.slackbot({ debug: process.env.NODE_ENV === 'development' })
+const controller = Botkit.slackbot({
+  debug: process.env.NODE_ENV === 'development'
+})
 
 controller
-  .spawn({ token: process.env.SLACK_API_TOKEN })
+  .spawn({
+    token: process.env.SLACK_API_TOKEN
+  })
   .startRTM(err => {
-    if (err) throw new Error(err)
+    if (err)
+      throw new Error(err)
   })
 
 

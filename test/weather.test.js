@@ -1,5 +1,4 @@
 import test from 'ava'
-import sinon from 'sinon'
 import moxios from 'moxios'
 
 import weather from '../lib/weather/api.js'
@@ -39,7 +38,9 @@ test.serial('reject when you recieve a non 200 code from weather forecast api', 
 test.serial('return a forecast', async t => {
   moxios.stubRequest(`http://weather.livedoor.com/forecast/webservice/json/v1?city=${EXISTS.code}`, {
     status: 200,
-    responseText: { description: 'forecast' }
+    responseText: {
+      description: 'forecast'
+    }
   })
 
   t.true(await weather.ask(EXISTS.name) === 'forecast')
