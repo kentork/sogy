@@ -54,3 +54,33 @@ test.serial('the conversation function returns reject promise when server respon
 
   await t.throws(api.conversation('text', 'user'))
 })
+
+
+test.serial('the question function returns utt', async t => {
+  moxios.stubRequest(`https://api.apigw.smt.docomo.ne.jp/knowledgeQA/v1/ask?APIKEY=${token}&q=text`, {
+    status: 200,
+    responseText: {
+      message: {
+        textForDisplay: "answer",
+      },
+      answers: [
+        {
+          answerText: "word",
+          linkText: "text",
+          linkUrl: "link"
+        }
+      ]
+    }
+  })
+
+  t.true(await api.question('text') === 'answer\n\n答え: *word*\n\n<link|text>')
+})
+
+test.serial('the question function returns reject promise when server responses has an error code', async t => {
+  moxios.stubRequest(`https://api.apigw.smt.docomo.ne.jp/knowledgeQA/v1/ask?APIKEY=${token}&q=text`, {
+    status: 404,
+    responseText: {}
+  })
+
+  await t.throws(api.question('text'))
+})
